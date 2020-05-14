@@ -1,8 +1,8 @@
 {
   "name": "sprint12",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "praktikum back end project",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"

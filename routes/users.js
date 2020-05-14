@@ -8,15 +8,14 @@ routerUsers.get('/', (req, res) => {
 routerUsers.get('/:id', (req, res) => {
   const { id } = req.params;
 
-  const match = users.find(({ _id }) => _id === id);
-  // console.log(match);
+  const foundUser = users.find(({ _id }) => _id === id);
 
-  if (!match) {
+  if (!foundUser) {
     res.status(404).send({ message: 'Нет пользователя с таким id' });
     return;
   }
 
-  res.send(match);
+  res.send(foundUser);
 });
 
 module.exports = routerUsers;
