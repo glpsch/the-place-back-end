@@ -26,7 +26,13 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5ecafcce41890f3d98fe76d0',
+  };
 
+  next();
+});
 app.use('/cards', routerCards);
 app.use('/users', routerUsers);
 

@@ -21,10 +21,10 @@
 // module.exports = routerUsers;
 
 const routerUsers = require('express').Router();
-const { getAllUsers, createUser /* , getUserById */ } = require('../controllers/users');
+const { getAllUsers, createUser, getUserById } = require('../controllers/users');
 
 routerUsers.get('/', getAllUsers);
 routerUsers.post('/', createUser);
-// router.get('/:userId', getUserById);
+routerUsers.get('/:userId', getUserById);
 
 module.exports = routerUsers;
