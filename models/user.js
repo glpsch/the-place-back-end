@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const urlValidator = require('./validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,6 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     // url
+    validate: urlValidator,
   },
 });
 
