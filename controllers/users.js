@@ -8,16 +8,34 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  // console.log('reqb', req.body)
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+      }
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'Не найдено пользователя с таким id' });
+      } else {
+        res.send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
