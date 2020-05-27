@@ -16,7 +16,6 @@ module.exports.createUser = (req, res) => {
     .catch((err) => res.status(400).send({ message: err.message }));
 };
 
-
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
