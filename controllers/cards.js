@@ -13,13 +13,10 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(400).send({ message: err.message });
       }
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
-      }
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: 'Произошла ошибка на сервере' });
     });
 };
 
@@ -36,6 +33,6 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: 'Произошла ошибка на сервере' });
     });
 };
