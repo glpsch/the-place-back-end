@@ -1,5 +1,6 @@
 
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 module.exports.getAllUsers = (req, res) => {
@@ -37,6 +38,25 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: err.message });
+      }
+      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+    });
+};
+
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      ////cookies
+      const token = jwt.sign({ _id: user._id }, 'dev-secret', { expiresIn: '7d' });
+      // вернём токен
+      res.send({ token });
+    })
+    .catch((err) => {
+      if (err.name === 'JsonWebTokenError') {
+        res.status(401).send({ message: 'Ошибка аутентификации' });
       }
       res.status(500).send({ message: 'Произошла ошибка на сервере' });
     });
