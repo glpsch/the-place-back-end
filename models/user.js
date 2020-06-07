@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    // index: true,
     validate: emailValidator,
     unique: true,
   },
@@ -33,6 +34,7 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
   },
 });
+
 
 // eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {

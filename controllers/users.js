@@ -13,16 +13,20 @@ module.exports.createUser = (req, res) => {
   const {
     name, about, avatar, email,
   } = req.body;
-  bcrypt.hash(req.body.password, 10)
+  User.init()
+    .then(() => bcrypt.hash(req.body.password, 10))
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      if (err.code === 11000) {
+        return res.status(409).send({ message: 'Пользователь с таким адресом почты уже существует' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
     });
 };
 
@@ -37,9 +41,9 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
     });
 };
 
@@ -56,8 +60,8 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'JsonWebTokenError') {
-        res.status(401).send({ message: 'Ошибка аутентификации' });
+        return res.status(401).send({ message: 'Ошибка аутентификации' });
       }
-      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
     });
 };
