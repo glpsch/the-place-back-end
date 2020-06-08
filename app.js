@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 
 const { PORT, DATABASE_URL } = require('./config');
 const routerCards = require('./routes/cards.js');
@@ -12,6 +13,7 @@ const auth = require('./middlewares/auth');
 const app = express();
 app.listen(PORT);
 
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { JWT_DEV } = require('../config');
 
 const handleAuthError = (res) => {
   res
@@ -15,7 +16,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'dev-secret');
+    payload = jwt.verify(token, JWT_DEV);
   } catch (err) {
     handleAuthError(res);
   }
