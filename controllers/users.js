@@ -11,16 +11,21 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const {
-    name, about, avatar, email,
+    name, about, avatar, email, password,
   } = req.body;
   User.init()
-    .then(() => bcrypt.hash(req.body.password, 10))
+    .then(() => {
+      if (password.length < 6) {
+        return Promise.reject(new Error('Длина пароля должна быть не менее 6 символов'));
+      }
+      return bcrypt.hash(password, 10);
+    })
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({ data: user.omitPrivate() }))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError' || err.message === 'Длина пароля должна быть не менее 6 символов') {
         return res.status(400).send({ message: err.message });
       }
       if (err.code === 11000) {
