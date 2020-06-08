@@ -9,7 +9,6 @@ const routerUsers = require('express').Router();
 const { getAllUsers, getUserById } = require('../controllers/users');
 
 routerUsers.get('/', getAllUsers);
-// routerUsers.post('/', createUser);
 routerUsers.get('/:userId', getUserById);
 
 module.exports = routerUsers;

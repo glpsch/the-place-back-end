@@ -23,15 +23,8 @@ mongoose.connect(DATABASE_URL, {
 
 app.post('/signin', login);
 app.post('/signup', createUser);
+
 app.use(auth);
-
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '5ecafcce41890f3d98fe76d0',
-//   };
-//   next();
-// });
 
 app.use('/cards', routerCards);
 app.use('/users', routerUsers);

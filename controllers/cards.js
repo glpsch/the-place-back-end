@@ -20,14 +20,17 @@ module.exports.createCard = (req, res) => {
     });
 };
 
+
 module.exports.deleteCard = (req, res) => {
-  // if req.params.cardId
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Не найдено карточки с таким id' });
+      } else if (toString(card.owner) === toString(req.user._id)) {
+        card.remove(req.params.cardId);
+        res.status(200).send({ message: 'Карточка успешно удалена' });
       } else {
-        res.send({ message: 'Карточка успешно удалена' });
+        res.status(403).send({ message: 'Вы не можете удалить чужую карточку' });
       }
     })
     .catch((err) => {

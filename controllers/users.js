@@ -53,15 +53,20 @@ module.exports.login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      ////cookies
       const token = jwt.sign({ _id: user._id }, 'dev-secret', { expiresIn: '7d' });
-      // вернём токен
       res.send({ token });
+      // res
+      //   .cookie('jwt', token, {
+      //     maxAge: 3600000,
+      //     httpOnly: true,
+      //     sameSite: true,
+      //   });
     })
     .catch((err) => {
-      if (err.name === 'JsonWebTokenError') {
+      if (err.name === 'JsonWebTokenError' || err.name === 'Error') {
         return res.status(401).send({ message: 'Ошибка аутентификации' });
       }
       return res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      // return res.status(500).send({ message: err.name });
     });
 };
