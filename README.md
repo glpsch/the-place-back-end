@@ -1,6 +1,6 @@
 # the-place-back-end
 
-## Yandex Praktikum sprint12-13
+## Yandex Praktikum sprint12-14
 
 Начальная стадия работы над проектом по созданию серверной составляющей проекта Mesto.
 13-й спринт пока без дополнительных заданий.
