@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const { PORT, DATABASE_URL } = require('./config');
 const routerCards = require('./routes/cards.js');
@@ -14,6 +15,7 @@ app.listen(PORT);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
 mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -21,9 +23,11 @@ mongoose.connect(DATABASE_URL, {
   useUnifiedTopology: true,
 });
 
+
 app.post('/signin', login);
 app.post('/signup', createUser);
 
+app.use(cookieParser());
 app.use(auth);
 
 app.use('/cards', routerCards);

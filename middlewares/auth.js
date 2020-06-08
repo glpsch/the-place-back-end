@@ -6,27 +6,21 @@ const handleAuthError = (res) => {
     .send({ message: 'Необходима авторизация' });
 };
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
-
-
-// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return handleAuthError(res);
+  if (!req.cookies.jwt) {
+    handleAuthError(res);
   }
 
-  const token = extractBearerToken(authorization);
+  const token = req.cookies.jwt;
   let payload;
 
   try {
     payload = jwt.verify(token, 'dev-secret');
   } catch (err) {
-    return handleAuthError(res);
+    handleAuthError(res);
   }
 
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user = payload;
 
-  next(); // пропускаем запрос дальше
+  next();
 };
