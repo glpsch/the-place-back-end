@@ -16,7 +16,7 @@ module.exports.createUser = (req, res) => {
   } = req.body;
   User.init()
     .then(() => {
-      if (password.length < 6) {
+      if (!password || password.length < 6) {
         return Promise.reject(new Error('Длина пароля должна быть не менее 6 символов'));
       }
       return bcrypt.hash(password, 10);

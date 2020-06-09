@@ -26,7 +26,8 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Не найдено карточки с таким id' });
-      } else if (card.owner === req.user._id) {
+      // eslint-disable-next-line eqeqeq
+      } else if (card.owner == req.user._id) {
         card.remove(req.params.cardId);
         res.status(200).send({ message: 'Карточка успешно удалена' });
       } else {
