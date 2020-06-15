@@ -5,4 +5,10 @@ const urlValidator = validate({
   message: 'Здесь должна быть ссылка',
 });
 
-module.exports = urlValidator;
+const emailValidator = validate({
+  validator: 'isEmail',
+  message: 'Введите корректный адрес электронной почты',
+});
+
+
+module.exports = { urlValidator, emailValidator };
