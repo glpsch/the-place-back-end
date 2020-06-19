@@ -3,28 +3,29 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_DEV } = require('../config');
-const { BadRequestError,
+const {
+  BadRequestError,
   UnauthorizedError,
   NotFoundError,
   ConflictError,
-  ForbiddenError } = require('../errors/errors');
+} = require('../errors/errors');
 
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    // .catch((err) => res.status(500).send({ message: err.message }));
     .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
   User.init()
     .then(() => {
       if (!password || password.length < 6) {
-        return Promise.reject(new Error('Длина пароля должна быть не менее 6 символов'));
+        throw new BadRequestError('Длина пароля должна быть не менее 6 символов');
       }
       return bcrypt.hash(password, 10);
     })
@@ -33,15 +34,17 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => res.send({ data: user.omitPrivate() }))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError' || err.message === 'Длина пароля должна быть не менее 6 символов') {
-        return res.status(400).send({ message: err.message });
+      let error = err;
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        error = new BadRequestError('Некорректный запрос');
       }
       if (err.code === 11000) {
-        return res.status(409).send({ message: 'Пользователь с таким адресом почты уже существует' });
+        error = new ConflictError('Пользователь с таким адресом почты уже существует');
       }
-      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      next(error);
     });
 };
+
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
@@ -62,8 +65,7 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 
-
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -79,10 +81,10 @@ module.exports.login = (req, res) => {
         .send({ message: `Привет, ${user.name}` });
     })
     .catch((err) => {
+      let error = err;
       if (err.name === 'JsonWebTokenError' || err.name === 'Error') {
-        return res.status(401).send({ message: 'Ошибка аутентификации' });
+        error = new UnauthorizedError('Ошибка авторизации');
       }
-      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
-      // return res.status(500).send({ message: err.name });
+      next(error);
     });
 };
