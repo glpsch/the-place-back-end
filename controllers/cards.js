@@ -1,48 +1,52 @@
 const Card = require('../models/card');
-// const {BadRequestError,
-//   UnauthorizedError,
-//   NotFoundError,
-//   ConflictError,
-//   ForbiddenError} = require('../errors/errors');
+const {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} = require('../errors/errors');
 
-module.exports.getAllCards = (req, res) => {
+
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
+      let error = err;
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(400).send({ message: err.message });
+        error = new BadRequestError('Некорректный запрос');
       }
-      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      next(error);
     });
 };
 
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Не найдено карточки с таким id' });
+        throw new NotFoundError('Не найдено карточки с таким id');
       // eslint-disable-next-line eqeqeq
       } else if (card.owner == req.user._id) {
         card.remove(req.params.cardId);
         res.status(200).send({ message: 'Карточка успешно удалена' });
       } else {
-        res.status(403).send({ message: 'Вы не можете удалить чужую карточку' });
+        throw new ForbiddenError('Вы не можете удалить чужую карточку');
       }
     })
     .catch((err) => {
+      let error = err;
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: err.message });
+        error = new BadRequestError('Некорректный запрос');
       }
-      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      next(error);
     });
 };
