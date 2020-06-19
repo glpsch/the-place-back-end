@@ -3,11 +3,18 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_DEV } = require('../config');
+const { BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+  ConflictError,
+  ForbiddenError } = require('../errors/errors');
 
-module.exports.getAllUsers = (req, res) => {
+
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    // .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
 module.exports.createUser = (req, res) => {
@@ -36,22 +43,24 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Не найдено пользователя с таким id' });
-      } else {
-        res.send({ data: user });
+        throw new NotFoundError('Не найдено пользователя с таким id');
       }
+      res.send({ data: user });
     })
     .catch((err) => {
+      // console.error('in catch:', err.name);
+      let error = err;
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: err.message });
+        error = new BadRequestError('Некорректный запрос');
       }
-      return res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      next(error);
     });
 };
+
 
 
 module.exports.login = (req, res) => {
