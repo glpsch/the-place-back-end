@@ -12,6 +12,7 @@ const routerCards = require('./routes/cards.js');
 const routerUsers = require('./routes/users.js');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 
 const app = express();
@@ -28,6 +29,8 @@ mongoose.connect(DATABASE_URL, {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
+
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -53,6 +56,7 @@ app.use(auth);
 app.use('/cards', routerCards);
 app.use('/users', routerUsers);
 
+app.use(errorLogger);
 app.use(errors()); // обработчик ошибок celebrate
 
 // eslint-disable-next-line no-unused-vars
