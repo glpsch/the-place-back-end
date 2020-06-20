@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+require('dotenv').config();
+//
+// console.log('NODE_ENV', process.env.JWT_SECRET);
 
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
@@ -31,6 +34,13 @@ mongoose.connect(DATABASE_URL, {
 });
 
 app.use(requestLogger);
+
+// краш-код для ревью
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
