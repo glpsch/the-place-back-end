@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
-//
-// console.log('NODE_ENV', process.env.JWT_SECRET);
+
 
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
@@ -21,6 +21,12 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const app = express();
 app.listen(PORT);
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter); // apply to all requests
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
