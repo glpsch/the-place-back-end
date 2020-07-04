@@ -24,6 +24,5 @@
     $ npm run dev
     ```
 
-#### Ссылка на фронтенд: http://mesto-place.ga или https://mesto-place.ga
-#### К серверу можно обратиться по публичному IP-адресу 84.201.137.207 или через api.mesto-place.ga
+
 
