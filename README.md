@@ -1,25 +1,25 @@
 # the-place-back-end
 
-## Yandex Praktikum sprint12-15
+## Yandex Praktikum sprint 12-15
 
-Серверная часть проекта Mesto.
-13-й спринт пока без дополнительных заданий.
-Текущая версия: v0.2.1
+The backend of Mesto (The Place) project.
 
-#### Для работы с проектом необходимо: 
+Current version: v0.2.1
 
-1.  Скачать последнюю версию проекта
-2.  Распаковать в директорию 
-3.  Открыть директорию в терминале и установить npm командой:
+#### To work with this project you need: 
+
+1.  Download the latest version
+2.  Unpack in a chosen directory
+3.  Open the directory from a terminal and install npm:
     ```
     $ npm install
     ```
 
-4. Для непосредственного запуска проекта выполнить команду:
+4. To run the project:
     ```
     $ npm run start
     ```	
-    Или для запуска с hot reload:
+    To run with hot reload:
     ```
     $ npm run dev
     ```
