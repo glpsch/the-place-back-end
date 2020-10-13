@@ -10,7 +10,7 @@ Current version: v0.2.1
 
 1.  Download the latest version
 2.  Unpack in a chosen directory
-3.  Open the directory from a terminal and install npm:
+3.  Open the directory from a terminal and install npm dependencies:
     ```
     $ npm install
     ```
